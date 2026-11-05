@@ -4,24 +4,27 @@
 
 - Linux / Ubuntu / WSL
 - R and `Rscript`
-- TCGA-LUAD sample information file: `gdc_sample_sheet.tsv`
-- Extracted GDC STAR gene-count files
+- The TCGA sample sheet: `gdc_sample_sheet.tsv`
+- The downloaded TCGA archive: `tcga_data.tar.gz`
+- Extracted sample folders containing STAR gene-count files
 
-The R script uses base R functions and does not require additional R packages.
+The analysis uses Base R, so no additional R packages are required.
 
-## 1. Open the project folder
+## 1. Open the Project 4 folder
 
 ```bash
 cd ~/MTech_GitHub/Project_4_TCGA_LUAD
 ```
 
-Check that the script and sample sheet are present:
+Check that the script, sample sheet, and archive are present:
 
 ```bash
-ls -lh project4.R gdc_sample_sheet.tsv
+ls -lh project4.R gdc_sample_sheet.tsv tcga_data.tar.gz
 ```
 
-## 2. Check R installation
+If your project is stored in a different location, change to that folder before running the commands.
+
+## 2. Check the R installation
 
 ```bash
 R --version
@@ -35,24 +38,37 @@ sudo apt update
 sudo apt install r-base
 ```
 
-## 3. Check the input folder structure
+## 3. Extract the TCGA data
 
-The extracted sample folders should be inside the project directory and named using their GDC File IDs. Each sample folder should contain its corresponding STAR gene-count file.
+If the sample archive has not already been extracted, run:
 
-Example:
+```bash
+tar -zxvf tcga_data.tar.gz
+```
+
+The extracted sample folders must be located directly inside the project directory and named using the corresponding `File.ID` values from `gdc_sample_sheet.tsv`.
+
+Each sample folder should contain a STAR gene-count file whose name ends with:
+
+```text
+rna_seq.augmented_star_gene_counts.tsv
+```
+
+Expected layout:
 
 ```text
 Project_4_TCGA_LUAD/
 ├── project4.R
 ├── gdc_sample_sheet.tsv
-├── <GDC-File-ID-1>/
+├── tcga_data.tar.gz
+├── <File.ID-1>/
 │   └── <sample>.rna_seq.augmented_star_gene_counts.tsv
-├── <GDC-File-ID-2>/
+├── <File.ID-2>/
 │   └── <sample>.rna_seq.augmented_star_gene_counts.tsv
 └── ...
 ```
 
-The folder names must match the `File ID` values in `gdc_sample_sheet.tsv`.
+If extraction creates an additional parent directory, move or copy the individual `File.ID` sample folders into the project directory so that the script can locate them.
 
 ## 4. Run the analysis
 
@@ -60,9 +76,9 @@ The folder names must match the `File ID` values in `gdc_sample_sheet.tsv`.
 Rscript project4.R
 ```
 
-The script reads the sample sheet, selects primary tumour and solid tissue normal samples, extracts NKX2-1 TPM values, applies the `log2(TPM + 1)` transformation, compares the two groups using a t-test, and saves a boxplot.
+The script reads the sample sheet, selects Primary Tumor and Solid Tissue Normal samples, extracts NKX2-1 TPM values, transforms expression using `log2(TPM + 1)`, performs a t-test, and creates a boxplot.
 
-## 5. Check the output
+## 5. Check the generated output
 
 ```bash
 ls -lh NKX2-1_expression.png
@@ -74,12 +90,14 @@ Open the plot in Windows from WSL:
 explorer.exe NKX2-1_expression.png
 ```
 
+The plot compares NKX2-1 expression between Solid Tissue Normal and Primary Tumor samples. The t-test p-value is displayed above the boxes.
+
 ## 6. Run the workflow
 
-After placing the script, sample sheet, and extracted sample folders in the project directory, run:
+After the sample sheet and extracted sample folders are in the required locations, run:
 
 ```bash
-# Run the R analysis
+# Run the analysis
 Rscript project4.R
 
 # Check the generated plot
@@ -94,10 +112,11 @@ explorer.exe NKX2-1_expression.png
 **Input files:**
 
 - `gdc_sample_sheet.tsv`
-- Extracted sample folders named by GDC `File ID`
-- STAR gene-count files named `*.rna_seq.augmented_star_gene_counts.tsv`
+- `tcga_data.tar.gz` (used only if the sample data still needs extraction)
+- Extracted sample folders named by `File.ID`
+- STAR gene-count files ending in `rna_seq.augmented_star_gene_counts.tsv`
 
-**Script:**
+**Code file:**
 
 - `project4.R`
 
@@ -105,6 +124,6 @@ explorer.exe NKX2-1_expression.png
 
 - `NKX2-1_expression.png`
 
-## Data handling note
+## Data-use note
 
-Check the access category and data-use terms for your GDC files before uploading any data to GitHub. Do not place controlled-access or otherwise restricted data in a public repository. When in doubt, keep the repository private and exclude the downloaded data files.
+Check the access category and data-use terms for the downloaded GDC files before uploading them to GitHub. Do not upload controlled-access or otherwise restricted TCGA data to a public repository. You can publish the analysis script and this README while keeping restricted or large input data outside the repository.
