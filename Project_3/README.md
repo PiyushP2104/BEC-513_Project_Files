@@ -105,7 +105,7 @@ explorer.exe vplot.png
 
 **Input file:**
 
-- `mapped (1).bed`
+- `mapped (1).bed (Extract it out in the working folder)`
 
 **Scripts:**
 
