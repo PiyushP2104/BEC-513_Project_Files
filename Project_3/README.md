@@ -37,9 +37,19 @@ sudo apt install gnuplot
 
 ## 3. Generate the V-plot count matrix
 
+**If your input file is uncompressed (`.bed`):**
+
 ```bash
 python3 project3.py < "mapped (1).bed" > vplot_matrix.txt
 ```
+
+**If your input file is compressed (`.bed.gz`):**
+
+```bash
+gzip -cd "mapped (1).bed.gz" | python3 project3.py > vplot_matrix.txt
+```
+
+Use only the command corresponding to your input file format.
 
 Check the generated matrix:
 
